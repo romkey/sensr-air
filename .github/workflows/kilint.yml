@@ -1,0 +1,53 @@
+---
+name: kilint
+
+on:
+  push:
+    paths:
+      - "hw/**"
+      - "BOFFF.md"
+      - ".kilint.yml"
+      - "ci/kilint-check.sh"
+      - ".github/workflows/kilint.yml"
+  pull_request:
+    paths:
+      - "hw/**"
+      - "BOFFF.md"
+      - ".kilint.yml"
+      - "ci/kilint-check.sh"
+      - ".github/workflows/kilint.yml"
+  workflow_dispatch:
+
+env:
+  # kilint has no releases yet; pin here once it tags one.
+  KILINT_REF: main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for BOFFF.md
+        id: bofff
+        run: |
+          if [ -f BOFFF.md ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "BOFFF.md is missing — skipping kilint"
+          fi
+
+      - name: Set up Python
+        if: steps.bofff.outputs.present == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install kilint
+        if: steps.bofff.outputs.present == 'true'
+        run: pip install "git+https://github.com/romkey/kilint@${KILINT_REF}"
+
+      - name: Lint latest board versions
+        if: steps.bofff.outputs.present == 'true'
+        run: ./ci/kilint-check.sh

@@ -1,0 +1,23 @@
+---
+name: BOFFF
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  present:
+    name: BOFFF.md present
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for BOFFF.md
+        run: |
+          if [ -f BOFFF.md ]; then
+            echo "BOFFF.md is present"
+          else
+            echo "BOFFF.md is missing"
+            exit 1
+          fi

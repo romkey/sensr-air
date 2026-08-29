@@ -1,0 +1,10 @@
+# kilint configuration for sensr-air. Every rule is enabled with its default
+# severity unless overridden here; rules may be referenced by slug or number.
+# See https://github.com/romkey/kilint for the full rule list.
+rules:
+  # CI lints boards long after they were drawn, so only validate the format of
+  # the title-block date, not that it is today's date.
+  title-block-date:
+    options:
+      require_today: false
+      formats: ["%Y-%m-%d"]

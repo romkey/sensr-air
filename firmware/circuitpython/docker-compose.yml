@@ -1,0 +1,15 @@
+---
+# Compile-checks code.py with mpy-cross, the same check CI runs.
+# CircuitPython has no linking step, so this is the closest thing to a build.
+#
+#   docker compose run --rm build
+services:
+  build:
+    image: python:3.12-slim
+    working_dir: /src
+    volumes:
+      - .:/src
+    command: >
+      sh -c "pip install --quiet mpy-cross &&
+             mpy-cross code.py -o /tmp/code.mpy &&
+             echo 'code.py compiled OK'"

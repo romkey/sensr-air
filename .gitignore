@@ -1,0 +1,20 @@
+.DS_Store
+
+# KiCAD generated/local files under hw/
+hw/**/production/
+hw/**/*-backups/
+hw/**/fp-info-cache
+hw/**/_autosave-*
+hw/**/*.kicad_prl
+hw/**/*.kicad_pcb-bak
+hw/**/*.kicad_sch-bak
+hw/**/*-bak
+hw/**/*.000
+hw/**/*.lck
+hw/**/*~
+
+# firmware build artifacts
+firmware/arduino/build/
+firmware/arduino/sensor-test/build/
+firmware/esphome/.esphome/
+firmware/esphome/secrets.yaml

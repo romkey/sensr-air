@@ -1,0 +1,27 @@
+---
+name: ESPHome
+
+on:
+  push:
+    paths:
+      - "firmware/esphome/**"
+      - ".github/workflows/esphome.yml"
+  pull_request:
+    paths:
+      - "firmware/esphome/**"
+      - ".github/workflows/esphome.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create dummy secrets
+        run: cp firmware/esphome/secrets.yaml.example firmware/esphome/secrets.yaml
+
+      - name: Compile firmware
+        uses: esphome/build-action@v7
+        with:
+          yaml-file: firmware/esphome/sensor-test.yaml

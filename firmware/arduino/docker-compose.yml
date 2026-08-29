@@ -1,0 +1,11 @@
+---
+# Builds the sensor-test sketch for ESP32-S3.
+#
+#   docker compose run --rm build
+#
+# The compiled firmware ends up in ./build/
+services:
+  build:
+    build: .
+    volumes:
+      - .:/src

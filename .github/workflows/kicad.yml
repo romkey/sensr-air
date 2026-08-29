@@ -1,0 +1,27 @@
+---
+name: KiCAD
+
+on:
+  push:
+    paths:
+      - "hw/**"
+      - "ci/kicad-check.sh"
+      - ".github/workflows/kicad.yml"
+  pull_request:
+    paths:
+      - "hw/**"
+      - "ci/kicad-check.sh"
+      - ".github/workflows/kicad.yml"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:9.0
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run ERC and DRC on latest board versions
+        run: ./ci/kicad-check.sh

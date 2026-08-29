@@ -1,0 +1,32 @@
+---
+name: CircuitPython
+
+on:
+  push:
+    paths:
+      - "firmware/circuitpython/**"
+      - ".github/workflows/circuitpython.yml"
+  pull_request:
+    paths:
+      - "firmware/circuitpython/**"
+      - ".github/workflows/circuitpython.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firmware/circuitpython
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install mpy-cross
+        run: pip install mpy-cross
+
+      - name: Compile code.py
+        run: mpy-cross code.py -o /tmp/code.mpy
