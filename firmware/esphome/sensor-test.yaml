@@ -1,0 +1,129 @@
+---
+# Test firmware for the sensr-air board (ESPHome)
+#
+# Sensors under test (addresses as populated on hw/air-stcc4/0.4.0):
+#   SGP41  (VOC/NOx, I2C 0x59) - native sgp4x platform, which reads the sensor's
+#          feature set and drives an SGP40 (boards up to 0.3.0) or an SGP41
+#          (0.4.0 and later) accordingly
+#   STCC4  (CO2,     I2C 0x64) - local external component (components/stcc4)
+#   SFA40  (HCHO,    I2C 0x5D) - native sfa40 platform (ESPHome 2026.9+)
+#   SHT40  (temp/RH) - not directly on the bus; the STCC4 reads it over a
+#          private second I2C bus and reports its values with each measurement
+#   BMV080 (PM,      I2C 0x54) - sweitzja/esphome-bmv080 external component
+#
+# Target: ESP32-S3. Adjust `board` and the I2C pins for your dev board.
+
+esphome:
+  name: sensr-air-test
+  friendly_name: sensr-air test
+
+# Note: the PlatformIO toolchain is required. The BMV080 component injects
+# Bosch's precompiled SDK via PlatformIO build flags, which ESPHome's native
+# ESP-IDF toolchain (the default since 2026.7) does not honor.
+esp32:
+  board: esp32-c3-devkitc-02
+  framework:
+    type: esp-idf
+  toolchain: platformio
+
+logger:
+  level: DEBUG
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  use_address: 10.0.1.163
+
+packages:
+  wifi-diagnostics: github://romkey/esphome-lib/lib/wifi-diagnostics.yml@main
+  esp32-diagnostics: github://romkey/esphome-lib/lib/esp32.yml@main
+  i2c-scan: github://romkey/esphome-lib/lib/i2c-scan.yml@main
+  restart: github://romkey/esphome-lib/lib/restart.yml@main
+
+external_components:
+  # local STCC4 component (no upstream ESPHome support yet)
+  - source:
+      type: local
+      path: components
+    components: [stcc4]
+  # BMV080 component wrapping the Bosch precompiled SDK
+  - source:
+      type: git
+      url: https://github.com/romkey/esphome-bmv080
+    components: [bmv080]
+
+web_server:
+  version: 3
+
+i2c:
+  # the i2c-scan package expects this id
+  id: i2c0
+  sda: GPIO0
+  scl: GPIO1
+  scan: true
+
+bmv080:
+  id: bmv080_sensor
+  address: 0x54
+  mode: continuous
+  measurement_algorithm: high_precision
+  update_interval: 5s
+
+sensor:
+  # The sgp4x platform reads the sensor's feature set at startup and reports
+  # whether it found an SGP40 or an SGP41. NOx needs an SGP41 (0.4.0 and
+  # later); on an SGP40 the component logs an error and disables it.
+  - platform: sgp4x
+    address: 0x59
+    update_interval: 10s
+    voc_index:
+      name: "VOC Index"
+    nox_index:
+      name: "NOx Index"
+
+  # If the STCC4's ADDR line is pulled high, change the address to 0x65.
+  # Temperature and humidity come from the SHT40, which the STCC4 reads
+  # over its private I2C bus.
+  - platform: stcc4
+    address: 0x64
+    update_interval: 10s
+    co2:
+      name: "CO2"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+
+  # The SFA40 measures its own temperature and humidity and uses them to
+  # compensate the formaldehyde reading.
+  - platform: sfa40
+    address: 0x5D
+    update_interval: 10s
+    formaldehyde:
+      name: "Formaldehyde"
+    temperature:
+      name: "SFA40 Temperature"
+    humidity:
+      name: "SFA40 Humidity"
+
+  - platform: bmv080
+    bmv080_id: bmv080_sensor
+    pm_1_0:
+      name: "PM 1.0"
+    pm_2_5:
+      name: "PM 2.5"
+    pm_10:
+      name: "PM 10"
+
+binary_sensor:
+  - platform: bmv080
+    bmv080_id: bmv080_sensor
+    obstructed:
+      name: "BMV080 Obstructed"
+    out_of_range:
+      name: "BMV080 Out of Range"

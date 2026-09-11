@@ -1,0 +1,25 @@
+---
+# Compiles the ESPHome test firmware.
+#
+#   cp secrets.yaml.example secrets.yaml   # then edit secrets.yaml
+#   docker compose run --rm compile
+#
+# To flash and view logs on attached hardware, use `run` instead:
+#   docker compose run --rm esphome run sensor-test.yaml
+# The SFA40 component landed upstream after 2026.8, so these use the beta
+# image; switch back to :latest once a stable release includes it.
+services:
+  compile:
+    image: esphome/esphome:beta
+    volumes:
+      - .:/config
+    command: compile sensor-test.yaml
+
+  esphome:
+    image: esphome/esphome:beta
+    volumes:
+      - .:/config
+    ports:
+      - 6052:6052
+#    devices:
+#      - /dev/ttyACM0:/dev/ttyACM0

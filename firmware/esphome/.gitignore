@@ -1,0 +1,12 @@
+# Gitignore settings for ESPHome
+# This is an example and may include too much for your use-case.
+# You can modify this file to suit your needs.
+/.esphome/
+/secrets.yaml
+
+# ESPHome device-builder local state. .device-builder-peer-link-key.bin and
+# .device-builder.json hold a key and dashboard identity - never commit these.
+/.device-builder*
+
+# Python bytecode from the local external components
+__pycache__/
