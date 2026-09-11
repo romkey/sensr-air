@@ -21,6 +21,17 @@ jobs:
       - name: Create dummy secrets
         run: cp firmware/esphome/secrets.yaml.example firmware/esphome/secrets.yaml
 
+      # The build-action mounts $HOME into its container, so PlatformIO
+      # installs the ESP-IDF toolchain to ~/.platformio on the runner.
+      # Downloading it costs ~70s of the ~210s build.
+      - name: Cache PlatformIO toolchain
+        uses: actions/cache@v6
+        with:
+          path: ~/.platformio
+          key: platformio-${{ runner.os }}-${{ hashFiles('firmware/esphome/sensor-test.yaml') }}
+          restore-keys: |
+            platformio-${{ runner.os }}-
+
       # The SFA40 component landed upstream after 2026.8; drop `version` once
       # a stable release includes it.
       - name: Compile firmware

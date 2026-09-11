@@ -18,6 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Installing the ESP32 core and its toolchain costs ~90s of the ~115s
+      # build; the libraries are small but land in the same place.
+      - name: Cache Arduino core and libraries
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.arduino15
+            ~/Arduino/libraries
+          key: arduino-${{ runner.os }}-${{ hashFiles('.github/workflows/arduino.yml') }}
+          restore-keys: |
+            arduino-${{ runner.os }}-
+
       - name: Compile sketch
         uses: arduino/compile-sketches@v1
         with:

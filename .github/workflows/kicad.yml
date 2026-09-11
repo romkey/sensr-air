@@ -18,7 +18,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     container:
-      image: kicad/kicad:9.0
+      # Must be at least as new as the KiCAD that saved the boards: the 0.4.0
+      # files are format 20260206 (KiCAD 10) and a 9.0 container cannot load
+      # them, which reads as "Failed to load board", not as a clean check.
+      image: kicad/kicad:10.0
       options: --user root
     steps:
       - uses: actions/checkout@v7

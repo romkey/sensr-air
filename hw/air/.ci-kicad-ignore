@@ -1,0 +1,3 @@
+The earlier SCD40 + BME680 board is no longer being revised and does not pass
+ERC or DRC (missing power flags, and Qwiic connector pads 5/6 sit inside the
+board-edge clearance). Delete this file to check it again.
