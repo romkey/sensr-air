@@ -15,7 +15,8 @@ RUN arduino-cli config init --additional-urls \
 
 # Sensor libraries
 RUN arduino-cli lib update-index && \
-    arduino-cli lib install "Sensirion Core" "Sensirion I2C SGP40" "Sensirion I2C STCC4" && \
+    arduino-cli lib install "Sensirion Core" "Sensirion I2C SGP40" \
+      "Sensirion I2C SGP41" "Sensirion I2C SFA4x" "Sensirion I2C STCC4" && \
     arduino-cli config set library.enable_unsafe_install true && \
     arduino-cli lib install --git-url https://github.com/DFRobot/DFRobot_BMV080.git
 

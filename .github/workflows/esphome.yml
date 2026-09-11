@@ -21,7 +21,10 @@ jobs:
       - name: Create dummy secrets
         run: cp firmware/esphome/secrets.yaml.example firmware/esphome/secrets.yaml
 
+      # The SFA40 component landed upstream after 2026.8; drop `version` once
+      # a stable release includes it.
       - name: Compile firmware
         uses: esphome/build-action@v7
         with:
           yaml-file: firmware/esphome/sensor-test.yaml
+          version: beta

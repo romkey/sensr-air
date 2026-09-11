@@ -1,2 +1,6 @@
-adafruit-circuitpython-sgp40
+adafruit-circuitpython-sgp41
 adafruit-circuitpython-stcc4
+# Boards up to hw/air-stcc4/0.3.0 carry an SGP40 instead of an SGP41
+adafruit-circuitpython-sgp40
+# Not on PyPI yet; install from the repository
+circuitpython-sfa40 @ git+https://github.com/romkey/circuitpython-sfa40

@@ -28,6 +28,8 @@ jobs:
           libraries: |
             - name: Sensirion Core
             - name: Sensirion I2C SGP40
+            - name: Sensirion I2C SGP41
+            - name: Sensirion I2C SFA4x
             - name: Sensirion I2C STCC4
             - source-url: https://github.com/DFRobot/DFRobot_BMV080.git
           sketch-paths: |
